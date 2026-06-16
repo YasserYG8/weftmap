@@ -11,13 +11,13 @@ export type LangSpec = {
   callQuery: string;
   /** Captures the raw module specifier of each import (e.g. `./utils`, `pkg.mod`). */
   importQuery: string;
-  /** Captures class definitions (e.g. `(class_definition) @class`). */
-  classQuery: string;
   funcDefTypes: ReadonlySet<string>;
+  /** Captures class definitions (e.g. `(class_definition) @class`). Omit for class-less languages. */
+  classQuery?: string;
   /** Node types that introduce a class scope (to attribute methods to a class). */
-  classNodeTypes: ReadonlySet<string>;
+  classNodeTypes?: ReadonlySet<string>;
   /** Base-class names a class declaration extends. */
-  classBases: (node: Node) => string[];
+  classBases?: (node: Node) => string[];
   /** Map an import specifier (from `fromFile`) to a file path in the project, or null. */
   resolveModule: (fromFile: string, specifier: string, paths: Set<string>) => string | null;
 };
@@ -93,6 +93,7 @@ async function parseFile(
   const tree = parser.parse(source.content);
   const root = tree.rootNode;
 
+  const classNodeTypes = spec.classNodeTypes ?? new Set<string>();
   const defs = new Set<string>();
   const methodClass = new Map<string, string>();
   const defQuery = language.query(spec.funcDefQuery);
@@ -100,18 +101,21 @@ async function parseFile(
     const name = resolveName(node);
     if (!name) continue;
     defs.add(name);
-    const cls = enclosingClassName(node, spec.classNodeTypes);
+    const cls = enclosingClassName(node, classNodeTypes);
     if (cls) methodClass.set(name, cls);
   }
 
   const classes = new Set<string>();
   const extendsRel: { cls: string; base: string }[] = [];
-  const classQuery = language.query(spec.classQuery);
-  for (const { node } of classQuery.captures(root)) {
-    const name = resolveName(node);
-    if (!name) continue;
-    classes.add(name);
-    for (const base of spec.classBases(node)) extendsRel.push({ cls: name, base });
+  if (spec.classQuery) {
+    const classQuery = language.query(spec.classQuery);
+    for (const { node } of classQuery.captures(root)) {
+      const name = resolveName(node);
+      if (!name) continue;
+      classes.add(name);
+      const bases = spec.classBases?.(node) ?? [];
+      for (const base of bases) extendsRel.push({ cls: name, base });
+    }
   }
 
   const calls: { caller: string | null; callee: string }[] = [];

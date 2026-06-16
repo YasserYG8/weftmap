@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { pythonAnalyzer } from "./python";
 import { javascriptAnalyzer } from "./javascript";
+import { typescriptAnalyzer } from "./typescript";
+import { goAnalyzer } from "./go";
 import type { Graph, LanguageAnalyzer, SourceFile } from "../types";
 
 function run(analyzer: LanguageAnalyzer, files: [string, string][]): Promise<Graph> {
@@ -134,5 +136,39 @@ class Dog(Animal):
     expect(hasEdge(graph, "class::widget.js::Widget", "class::base.js::Base", "extends")).toBe(true);
     const render = graph.nodes.find((n) => n.id === "widget.js::render");
     expect(render?.parent).toBe("class::widget.js::Widget");
+  });
+});
+
+describe("typescript", () => {
+  test("parsea tipos y resuelve imports entre archivos", async () => {
+    const graph = await run(typescriptAnalyzer, [
+      ["main.ts", 'import { work } from "./helpers";\nfunction run(): void { work(); }\n'],
+      ["helpers.ts", "export function work(): number {\n  return 1;\n}\n"],
+    ]);
+
+    expect(hasEdge(graph, "mod::main.ts", "mod::helpers.ts", "imports")).toBe(true);
+    expect(hasEdge(graph, "main.ts::run", "helpers.ts::work", "calls")).toBe(true);
+  });
+
+  test("clases tipadas y herencia", async () => {
+    const graph = await run(typescriptAnalyzer, [
+      ["w.ts", "class Base {}\nclass Widget extends Base {\n  render(): void {}\n}\n"],
+    ]);
+
+    expect(hasEdge(graph, "class::w.ts::Widget", "class::w.ts::Base", "extends")).toBe(true);
+    const render = graph.nodes.find((n) => n.id === "w.ts::render");
+    expect(render?.parent).toBe("class::w.ts::Widget");
+  });
+});
+
+describe("go", () => {
+  test("call graph entre archivos del mismo paquete", async () => {
+    const graph = await run(goAnalyzer, [
+      ["a.go", "package main\n\nfunc run() {\n\thelp()\n}\n"],
+      ["b.go", "package main\n\nfunc help() {}\n"],
+    ]);
+
+    // No import statements between files, resolved via unique-definition fallback.
+    expect(hasEdge(graph, "a.go::run", "b.go::help", "calls")).toBe(true);
   });
 });

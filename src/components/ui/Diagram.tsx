@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -221,6 +221,7 @@ function layout(graph: Graph): Layout {
     id: `e${i}`,
     source: e.source,
     target: e.target,
+    data: { kind: e.kind },
     animated: e.kind === "calls",
     markerEnd: { type: MarkerType.ArrowClosed, color: edgeColor(e.kind) },
     style: {
@@ -246,6 +247,20 @@ export default function Diagram({
   emptyLabel: string;
 }) {
   const { nodes, edges } = useMemo(() => layout(graph), [graph]);
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+
+  const shownEdges = useMemo(
+    () => edges.filter((e) => !hidden.has((e.data as { kind: string }).kind)),
+    [edges, hidden],
+  );
+
+  const toggle = (kind: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
+      return next;
+    });
 
   if (graph.nodes.length === 0) {
     return (
@@ -258,7 +273,7 @@ export default function Diagram({
   return (
     <ReactFlow
       nodes={nodes}
-      edges={edges}
+      edges={shownEdges}
       nodeTypes={nodeTypes}
       fitView
       minZoom={0.1}
@@ -268,17 +283,27 @@ export default function Diagram({
       <Controls showInteractive={false} />
       <Panel
         position="top-left"
-        className="flex gap-4 rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-[11px] text-muted backdrop-blur"
+        className="flex gap-2 rounded-lg border border-white/10 bg-black/70 px-2 py-1.5 text-[11px] backdrop-blur"
       >
-        {LEGEND.map((l) => (
-          <span key={l.label} className="flex items-center gap-1.5">
-            <span
-              className={`inline-block w-4 border-t ${l.dashed ? "border-dashed" : ""}`}
-              style={{ borderColor: l.color }}
-            />
-            {l.label}
-          </span>
-        ))}
+        {LEGEND.map((l) => {
+          const off = hidden.has(l.label);
+          return (
+            <button
+              key={l.label}
+              onClick={() => toggle(l.label)}
+              aria-pressed={!off}
+              className={`flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-white/5 ${
+                off ? "opacity-35 line-through" : "text-muted"
+              }`}
+            >
+              <span
+                className={`inline-block w-4 border-t ${l.dashed ? "border-dashed" : ""}`}
+                style={{ borderColor: l.color }}
+              />
+              {l.label}
+            </button>
+          );
+        })}
       </Panel>
     </ReactFlow>
   );

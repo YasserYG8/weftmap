@@ -8,7 +8,12 @@ export const runtime = "nodejs";
 const MAX_TOTAL_BYTES = 2_000_000;
 const MAX_FILES = 400;
 
-const EXT: Record<string, string> = { python: "py", javascript: "js" };
+const EXT: Record<string, string> = {
+  python: "py",
+  javascript: "js",
+  typescript: "ts",
+  go: "go",
+};
 
 function normalizePath(p: string): string {
   return p.replace(/\\/g, "/").replace(/^\.\//, "");

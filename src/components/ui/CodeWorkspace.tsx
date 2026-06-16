@@ -4,13 +4,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Diagram from "./Diagram";
 import type { Graph } from "@/lib/analysis/types";
 
-const LANGUAGES = ["python", "javascript"];
+const LANGUAGES = ["python", "javascript", "typescript", "go"];
 
-const EXT: Record<string, string> = { python: "py", javascript: "js" };
+const EXT: Record<string, string> = {
+  python: "py",
+  javascript: "js",
+  typescript: "ts",
+  go: "go",
+};
 
 const PROJECT_EXTS: Record<string, string[]> = {
   python: [".py"],
-  javascript: [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"],
+  javascript: [".js", ".jsx", ".mjs", ".cjs"],
+  typescript: [".ts", ".tsx"],
+  go: [".go"],
 };
 
 const IGNORE_DIR =
@@ -59,6 +66,52 @@ function save(x) {
 }
 
 main();
+`,
+  typescript: `function main(): void {
+  const data = load();
+  save(transform(data));
+}
+
+function load(): number[] {
+  return read();
+}
+
+function transform(data: number[]): number[] {
+  return clean(data);
+}
+
+function clean(data: number[]): number[] {
+  return data;
+}
+
+function save(x: number[]): void {
+  write(x);
+}
+
+main();
+`,
+  go: `package main
+
+func main() {
+	data := load()
+	save(transform(data))
+}
+
+func load() []int {
+	return read()
+}
+
+func transform(data []int) []int {
+	return clean(data)
+}
+
+func clean(data []int) []int {
+	return data
+}
+
+func save(x []int) {
+	write(x)
+}
 `,
 };
 
