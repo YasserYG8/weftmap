@@ -28,7 +28,7 @@ export default function CallToAction({
   return (
     <section
       id="cta"
-      className="relative isolate overflow-hidden border-t border-[#e2e8f0] bg-gradient-to-b from-white to-[#edeefb]"
+      className="relative isolate overflow-hidden bg-[#f6f7f9]"
     >
       <div
         aria-hidden="true"

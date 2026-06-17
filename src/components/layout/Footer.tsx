@@ -65,7 +65,7 @@ export default function Footer({
 }: Props) {
   const t = getDictionary(lang);
   return (
-    <footer className="relative isolate overflow-hidden border-t border-[#e2e8f0] bg-[#f6f7f9]">
+    <footer className="relative isolate overflow-hidden bg-[#f6f7f9]">
 
       <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-x-8 gap-y-12 px-6 pb-44 pt-20 md:grid-cols-[1.7fr_1fr_1fr]">
         {/* Brand */}
