@@ -158,7 +158,7 @@ Newcomer-friendly tasks are tagged [`good first issue`](https://github.com/DataD
 
 **Next** — help wanted
 
-- [ ] More languages: Rust ([#12](https://github.com/DataDave-Dev/weftmap/issues/12)), Ruby ([#13](https://github.com/DataDave-Dev/weftmap/issues/13)), Java ([#14](https://github.com/DataDave-Dev/weftmap/issues/14))
+- [ ] More languages: Ruby ([#13](https://github.com/DataDave-Dev/weftmap/issues/13)), Java ([#14](https://github.com/DataDave-Dev/weftmap/issues/14))
 - [ ] Drive the Hero language chips from the registry ([#15](https://github.com/DataDave-Dev/weftmap/issues/15))
 - [ ] Broaden analyzer test coverage ([#16](https://github.com/DataDave-Dev/weftmap/issues/16))
 - [ ] Richer empty state when no functions are found ([#17](https://github.com/DataDave-Dev/weftmap/issues/17))

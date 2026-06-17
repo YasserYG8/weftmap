@@ -160,7 +160,7 @@ Las tareas para empezar están etiquetadas como [`good first issue`](https://git
 
 **Siguiente** — se busca ayuda
 
-- [ ] Más lenguajes: Rust ([#12](https://github.com/DataDave-Dev/weftmap/issues/12)), Ruby ([#13](https://github.com/DataDave-Dev/weftmap/issues/13)), Java ([#14](https://github.com/DataDave-Dev/weftmap/issues/14))
+- [ ] Más lenguajes: Ruby ([#13](https://github.com/DataDave-Dev/weftmap/issues/13)), Java ([#14](https://github.com/DataDave-Dev/weftmap/issues/14))
 - [ ] Derivar los chips de lenguajes del Hero desde el registro ([#15](https://github.com/DataDave-Dev/weftmap/issues/15))
 - [ ] Ampliar la cobertura de tests de los analyzers ([#16](https://github.com/DataDave-Dev/weftmap/issues/16))
 - [ ] Mejor estado vacío cuando no se encuentran funciones ([#17](https://github.com/DataDave-Dev/weftmap/issues/17))
